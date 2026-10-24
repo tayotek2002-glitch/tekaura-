@@ -4,7 +4,7 @@ import { ProductArt } from "@/components/product/ProductArt";
 export function ShopHero({ eyebrow, title, tagline, art }: { eyebrow: string; title: string; tagline: string; art?: PlaceholderArt }) {
   return (
     <section className="relative overflow-hidden bg-ink text-white">
-      <div aria-hidden className="absolute inset-0 bg-[radial-gradient(60%_80%_at_80%_20%,rgba(47,123,255,0.18),transparent_60%),radial-gradient(50%_60%_at_10%_100%,rgba(255,255,255,0.06),transparent_70%)]" />
+      <div aria-hidden className="absolute inset-0 bg-[radial-gradient(60%_80%_at_80%_20%,color-mix(in_srgb,var(--color-volt)_18%,transparent),transparent_60%),radial-gradient(50%_60%_at_10%_100%,rgba(255,255,255,0.06),transparent_70%)]" />
       <div className="container-x relative grid min-h-[340px] items-end gap-8 py-14 md:min-h-[420px] md:grid-cols-[1.4fr_1fr] md:py-20">
         <div className="animate-fade-up">
           <p className="eyebrow mb-5 text-white/50">{eyebrow}</p>
@@ -25,7 +25,7 @@ export function GridSkeleton() {
   return (
     <div className="container-x grid grid-cols-2 gap-5 pb-28 lg:grid-cols-4">
       {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="aspect-[4/5] animate-shimmer rounded-[28px] bg-[linear-gradient(90deg,#ececf0,#f7f7f9,#ececf0)] bg-[length:200%_100%]" />
+        <div key={i} className="aspect-[4/5] animate-shimmer rounded-[28px] bg-[linear-gradient(90deg,var(--color-tile-b),var(--color-tile-a),var(--color-tile-b))] bg-[length:200%_100%]" />
       ))}
     </div>
   );

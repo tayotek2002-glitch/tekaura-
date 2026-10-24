@@ -45,7 +45,7 @@ export function ProductCard({ product, priority }: { product: Product; priority?
       href={`/product/${product.slug}`}
       className="group relative flex flex-col overflow-hidden rounded-[28px] bg-white ring-1 ring-black/[0.04] transition-[box-shadow,transform] duration-700 ease-[var(--ease-out-expo)] hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgba(0,0,0,0.25)]"
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-b from-[#fafafb] to-[#ececf0]">
+      <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-b from-tile-a to-tile-b">
         <div className="absolute left-4 top-4 z-10 flex gap-2">
           <StatusBadge product={product} />
         </div>

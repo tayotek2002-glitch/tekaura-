@@ -10,7 +10,7 @@ export function EmailSignup() {
 
   return (
     <section className="relative overflow-hidden bg-ink py-24 text-white md:py-36">
-      <div aria-hidden className="absolute inset-0 bg-[radial-gradient(50%_70%_at_50%_120%,rgba(47,123,255,0.35),transparent_70%)]" />
+      <div aria-hidden className="absolute inset-0 bg-[radial-gradient(50%_70%_at_50%_120%,color-mix(in_srgb,var(--color-volt)_35%,transparent),transparent_70%)]" />
       <div className="container-x relative text-center">
         <p className="eyebrow mb-5 text-white/45">Stay in the loop</p>
         <h2 className="display mx-auto max-w-[16ch] text-[clamp(2.5rem,6vw,5.5rem)]">Be first to know.</h2>

@@ -30,6 +30,8 @@ A product is purchasable only when `status: "active"` and a variant has `offered
 ## Cinematic sequence
 
 `src/components/cinematic/` — a sticky canvas driven by scroll progress (ScrollTrigger + Lenis).
+Colour schemes: `src/config/theme.ts` (default: Graphite & Emerald; preview others with `?theme=graphite|titanium|aurora`).
+
 Each scene draws an image-frame sequence when configured, otherwise a procedural canvas render
 of the same story. Reduced-motion and low-power devices get a static, fully shoppable layout.
 

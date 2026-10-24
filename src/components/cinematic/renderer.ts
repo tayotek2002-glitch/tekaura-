@@ -11,6 +11,54 @@
  * and as the fallback while frames load or if they fail.
  */
 
+
+/* ── palette (follows the active colour scheme's CSS variables) ─────────── */
+type RGB = [number, number, number];
+export const P = {
+  bg: [6, 6, 7] as RGB,
+  graphite: [30, 31, 36] as RGB,
+  steel: [78, 82, 94] as RGB,
+  silver: [210, 220, 240] as RGB,
+  accent: [47, 123, 255] as RGB,
+  bright: [92, 155, 255] as RGB,
+  deep: [20, 80, 200] as RGB,
+  glow2: [120, 80, 255] as RGB,
+  glow3: [0, 200, 220] as RGB,
+};
+export const c = (rgb: RGB, a = 1) => `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a})`;
+
+function parseColor(v: string): RGB | null {
+  v = v.trim();
+  const hex = v.match(/^#([0-9a-f]{6})$/i);
+  if (hex) {
+    const n = parseInt(hex[1], 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  const nums = v.match(/-?[\d.]+/g);
+  return nums && nums.length >= 3 ? [Number(nums[0]), Number(nums[1]), Number(nums[2])] : null;
+}
+
+/** Read the current colour scheme from CSS custom properties. */
+export function loadPalette() {
+  if (typeof window === "undefined") return;
+  const cs = getComputedStyle(document.documentElement);
+  const read = (name: string, key: keyof typeof P) => {
+    const rgb = parseColor(cs.getPropertyValue(name));
+    if (rgb) P[key] = rgb;
+  };
+  read("--color-ink", "bg");
+  read("--color-graphite", "graphite");
+  read("--color-steel", "steel");
+  read("--color-silver", "silver");
+  read("--color-volt", "accent");
+  read("--color-volt-bright", "bright");
+  read("--color-volt-deep", "deep");
+  read("--scene-glow-2", "glow2");
+  read("--scene-glow-3", "glow3");
+  // keep the studio background very dark whatever the scheme
+  P.bg = P.bg.map((v) => Math.round(v * 0.6)) as RGB;
+}
+
 export const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const seg = (t: number, a: number, b: number) => clamp((t - a) / (b - a));
@@ -162,10 +210,10 @@ export function renderScene(ctx: CanvasRenderingContext2D, W: number, H: number,
 
   drawBackground(ctx, W, H, cx, cy, ph, st, time);
 
-  const c = Math.cos(st.rot);
+  const cosR = Math.cos(st.rot);
   const sn = Math.sin(st.rot);
-  const front = c >= 0;
-  const fx = Math.max(Math.abs(c), 0.002);
+  const front = cosR >= 0;
+  const fx = Math.max(Math.abs(cosR), 0.002);
   const depth = pw * 0.1 * (st.casep > 0.98 ? 1.25 : 1);
   const band = depth * Math.abs(sn);
   const totalW = pw * fx + band;
@@ -245,9 +293,9 @@ export function renderScene(ctx: CanvasRenderingContext2D, W: number, H: number,
     ctx.globalAlpha = st.snap * 0.6;
     ctx.beginPath();
     rr(ctx, faceCx - (pw * fx) / 2 - 10 * st.snap, top - 10 * st.snap, pw * fx + 20 * st.snap, ph + 20 * st.snap, r + 10);
-    ctx.strokeStyle = "#9cc0ff";
+    ctx.strokeStyle = c(P.bright);
     ctx.lineWidth = 2;
-    ctx.shadowColor = "#2f7bff";
+    ctx.shadowColor = c(P.accent);
     ctx.shadowBlur = 30;
     ctx.stroke();
     ctx.restore();
@@ -258,14 +306,14 @@ export function renderScene(ctx: CanvasRenderingContext2D, W: number, H: number,
 }
 
 function drawBackground(ctx: CanvasRenderingContext2D, W: number, H: number, cx: number, cy: number, ph: number, st: SceneState, time: number) {
-  ctx.fillStyle = "#060607";
+  ctx.fillStyle = c(P.bg);
   ctx.fillRect(0, 0, W, H);
 
   // overhead studio light
   const spot = ctx.createRadialGradient(cx, cy - ph * 0.9, 0, cx, cy - ph * 0.2, Math.max(W, H) * 0.75);
-  spot.addColorStop(0, `rgba(78,82,94,${0.55 + st.studio * 0.35})`);
-  spot.addColorStop(0.45, `rgba(30,31,36,${0.5 + st.studio * 0.2})`);
-  spot.addColorStop(1, "rgba(6,6,7,0)");
+  spot.addColorStop(0, c(P.steel, 0.55 + st.studio * 0.35));
+  spot.addColorStop(0.45, c(P.graphite, 0.5 + st.studio * 0.2));
+  spot.addColorStop(1, c(P.bg, 0));
   ctx.fillStyle = spot;
   ctx.fillRect(0, 0, W, H);
 
@@ -273,16 +321,16 @@ function drawBackground(ctx: CanvasRenderingContext2D, W: number, H: number, cx:
   if (st.blue > 0.01) {
     const pulse = 0.85 + Math.sin(time * 0.002) * 0.15;
     const b = ctx.createRadialGradient(cx, cy + ph * 0.45, 0, cx, cy + ph * 0.45, Math.max(W, H) * 0.6);
-    b.addColorStop(0, `rgba(47,123,255,${0.42 * st.blue * pulse})`);
-    b.addColorStop(0.5, `rgba(20,80,200,${0.12 * st.blue})`);
+    b.addColorStop(0, c(P.accent, 0.42 * st.blue * pulse));
+    b.addColorStop(0.5, c(P.deep, 0.12 * st.blue));
     b.addColorStop(1, "rgba(0,0,0,0)");
     ctx.fillStyle = b;
     ctx.fillRect(0, 0, W, H);
     // horizon line
     const lg = ctx.createLinearGradient(0, 0, W, 0);
-    lg.addColorStop(0, "rgba(47,123,255,0)");
-    lg.addColorStop(0.5, `rgba(92,155,255,${0.35 * st.blue})`);
-    lg.addColorStop(1, "rgba(47,123,255,0)");
+    lg.addColorStop(0, c(P.accent, 0));
+    lg.addColorStop(0.5, c(P.bright, 0.35 * st.blue));
+    lg.addColorStop(1, c(P.accent, 0));
     ctx.fillStyle = lg;
     ctx.fillRect(0, Math.min(H - 2, cy + ph * 0.56), W, 1);
   }
@@ -293,15 +341,15 @@ function drawBackground(ctx: CanvasRenderingContext2D, W: number, H: number, cx:
       const x = cx + side * Math.min(W * 0.36, ph * 0.9);
       const g = ctx.createLinearGradient(x - 120, 0, x + 120, 0);
       g.addColorStop(0, "rgba(255,255,255,0)");
-      g.addColorStop(0.5, `rgba(210,220,240,${0.07 * st.studio})`);
+      g.addColorStop(0.5, c(P.silver, 0.07 * st.studio));
       g.addColorStop(1, "rgba(255,255,255,0)");
       ctx.fillStyle = g;
       ctx.fillRect(x - 120, 0, 240, H);
     }
     // floor plane
     const f = ctx.createLinearGradient(0, cy + ph * 0.5, 0, H);
-    f.addColorStop(0, `rgba(40,42,48,${0.35 * st.studio})`);
-    f.addColorStop(1, "rgba(6,6,7,0)");
+    f.addColorStop(0, c(P.steel, 0.35 * st.studio));
+    f.addColorStop(1, c(P.bg, 0));
     ctx.fillStyle = f;
     ctx.fillRect(0, cy + ph * 0.56, W, H);
   }
@@ -342,9 +390,9 @@ function drawFront(ctx: CanvasRenderingContext2D, pw: number, ph: number, r: num
   ctx.fillRect(sx, sy, sw, shh);
   const t = time * 0.00018;
   const blobs: [number, number, number, string][] = [
-    [Math.sin(t) * 0.18, -0.18 + Math.cos(t * 1.3) * 0.05, 0.75, "rgba(47,123,255,0.85)"],
-    [0.28 + Math.cos(t) * 0.1, 0.22, 0.6, "rgba(120,80,255,0.55)"],
-    [-0.3, 0.38 + Math.sin(t * 0.8) * 0.06, 0.55, "rgba(0,200,220,0.35)"],
+    [Math.sin(t) * 0.18, -0.18 + Math.cos(t * 1.3) * 0.05, 0.75, c(P.accent, 0.85)],
+    [0.28 + Math.cos(t) * 0.1, 0.22, 0.6, c(P.glow2, 0.55)],
+    [-0.3, 0.38 + Math.sin(t * 0.8) * 0.06, 0.55, c(P.glow3, 0.35)],
   ];
   for (const [bx, by, br, col] of blobs) {
     const g = ctx.createRadialGradient(bx * sw, by * shh, 0, bx * sw, by * shh, br * sw);
@@ -366,11 +414,11 @@ function drawFront(ctx: CanvasRenderingContext2D, pw: number, ph: number, r: num
     ctx.arc(0, -shh * 0.04, R, 0, Math.PI * 2);
     ctx.stroke();
     const arc = ctx.createLinearGradient(-R, -R, R, R);
-    arc.addColorStop(0, "#5c9bff");
-    arc.addColorStop(1, "#2f7bff");
+    arc.addColorStop(0, c(P.bright));
+    arc.addColorStop(1, c(P.accent));
     ctx.strokeStyle = arc;
     ctx.lineCap = "round";
-    ctx.shadowColor = "#2f7bff";
+    ctx.shadowColor = c(P.accent);
     ctx.shadowBlur = 24;
     ctx.beginPath();
     ctx.arc(0, -shh * 0.04, R, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (0.15 + 0.55 * st.charge));
@@ -621,8 +669,8 @@ function drawCable(ctx: CanvasRenderingContext2D, x: number, portY: number, pw: 
   // port glow while charging
   if (st.charge > 0) {
     const g = ctx.createRadialGradient(x, portY, 0, x, portY, pw * 0.6);
-    g.addColorStop(0, `rgba(92,155,255,${0.55 * st.charge})`);
-    g.addColorStop(1, "rgba(47,123,255,0)");
+    g.addColorStop(0, c(P.bright, 0.55 * st.charge));
+    g.addColorStop(1, c(P.accent, 0));
     ctx.fillStyle = g;
     ctx.fillRect(x - pw * 0.6, portY - pw * 0.6, pw * 1.2, pw * 1.2);
   }
@@ -677,7 +725,7 @@ function drawParticles(ctx: CanvasRenderingContext2D, W: number, H: number, time
     const y = ((p.y - time * 0.000012 * p.sp) % 1 + 1) % 1;
     const x = p.x + Math.sin(time * 0.0003 * p.sp + p.y * 9) * 0.01;
     const a = 0.05 + p.z * 0.12 + st.blue * 0.08 * p.z;
-    ctx.fillStyle = st.blue > 0.3 && p.z > 0.7 ? `rgba(120,170,255,${a})` : `rgba(255,255,255,${a})`;
+    ctx.fillStyle = st.blue > 0.3 && p.z > 0.7 ? c(P.bright, a) : `rgba(255,255,255,${a})`;
     ctx.beginPath();
     ctx.arc(x * W, y * H, p.z * 1.3, 0, Math.PI * 2);
     ctx.fill();

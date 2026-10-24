@@ -12,6 +12,8 @@
   --color-volt: #2f7bff;
   --color-volt-bright: #5c9bff;
   --color-volt-deep: #1450c8;
+  --color-tile-a: #fafafb;
+  --color-tile-b: #e9e9ee;
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -35,6 +37,68 @@
     from { background-position: -200% 0; }
     to { background-position: 200% 0; }
   }
+}
+
+/* ── Colour schemes ──────────────────────────────────────────────────────────
+   The active scheme is set in src/config/theme.ts (data-theme on <html>).
+   --scene-* values colour the cinematic canvas (r g b triplets). */
+:root {
+  --scene-glow-2: 120 80 255;
+  --scene-glow-3: 0 200 220;
+}
+
+html[data-theme="titanium"] {
+  --color-ink: #13110f;
+  --color-charcoal: #1b1815;
+  --color-graphite: #25211d;
+  --color-steel: #39322c;
+  --color-slate: #776d64;
+  --color-silver: #d4c8bb;
+  --color-cloud: #ebe4da;
+  --color-mist: #f6f2ec;
+  --color-volt: #c47a42;
+  --color-volt-bright: #e09a62;
+  --color-volt-deep: #94552a;
+  --color-tile-a: #fdfbf8;
+  --color-tile-b: #ece4d9;
+  --scene-glow-2: 214 120 90;
+  --scene-glow-3: 240 190 120;
+}
+
+html[data-theme="aurora"] {
+  --color-ink: #070914;
+  --color-charcoal: #0c1020;
+  --color-graphite: #131830;
+  --color-steel: #232a48;
+  --color-slate: #6a7192;
+  --color-silver: #c2c7dc;
+  --color-cloud: #e5e7f3;
+  --color-mist: #f3f4fa;
+  --color-volt: #7b5cff;
+  --color-volt-bright: #a28cff;
+  --color-volt-deep: #5134e0;
+  --color-tile-a: #fbfbff;
+  --color-tile-b: #e7e8f4;
+  --scene-glow-2: 0 210 200;
+  --scene-glow-3: 255 90 190;
+}
+
+html[data-theme="emerald"] {
+  --color-ink: #070b09;
+  --color-charcoal: #0e1411;
+  --color-graphite: #151d19;
+  --color-steel: #24302a;
+  --color-slate: #66746c;
+  --color-silver: #c3cdc6;
+  --color-cloud: #e4eae5;
+  --color-mist: #f3f6f3;
+  --color-volt: #17845a;
+  --color-volt-bright: #3fd19a;
+  --color-volt-deep: #12704d;
+  --color-tile-a: #fbfdfb;
+  --color-tile-b: #e5ece7;
+  --scene-glow-2: 40 160 200;
+  --scene-glow-3: 190 230 120;
 }
 
 :root {
@@ -151,7 +215,7 @@ body {
   }
 
   .glass-dark {
-    background: rgb(10 10 12 / 0.86);
+    background: color-mix(in srgb, var(--color-ink) 94%, transparent);
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
   }

@@ -46,7 +46,7 @@ export function ShopByCategory() {
                   )}
                 >
                   {l.dark && (
-                    <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_60%_at_70%_70%,rgba(47,123,255,0.22),transparent_70%)] opacity-60 transition-opacity duration-700 group-hover:opacity-100" />
+                    <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_60%_at_70%_70%,color-mix(in_srgb,var(--color-volt)_22%,transparent),transparent_70%)] opacity-60 transition-opacity duration-700 group-hover:opacity-100" />
                   )}
                   <div className="relative z-10">
                     <p className={cn("eyebrow mb-2", l.dark ? "text-white/45" : "text-slate")}>{n} product types</p>

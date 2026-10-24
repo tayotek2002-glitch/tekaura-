@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cinematicScenes, type CinematicScene } from "@/config/cinematic";
-import { clamp, computeState, renderScene } from "./renderer";
+import { P, c, clamp, computeState, loadPalette, renderScene } from "./renderer";
 import { FrameSequence, drawCover } from "./frames";
 import { cn } from "@/lib/format";
 
@@ -50,6 +50,7 @@ function ScrollSequence({ pending }: { pending: boolean }) {
   useEffect(() => {
     if (pending) return;
     gsap.registerPlugin(ScrollTrigger);
+    loadPalette();
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d", { alpha: false })!;
     let W = 0;
@@ -100,7 +101,7 @@ function ScrollSequence({ pending }: { pending: boolean }) {
       const seq = sequences[i];
       const img = seq?.frameAt(t);
       if (img) {
-        ctx.fillStyle = "#060607";
+        ctx.fillStyle = c(P.bg);
         ctx.fillRect(0, 0, W, H);
         drawCover(ctx, img, W, H);
         // crossfade into the next clip over the last 6% of a scene
@@ -402,12 +403,13 @@ function StaticFrame({ scene }: { scene: number }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const cfg = cinematicScenes[scene];
   useEffect(() => {
-    const c = ref.current!;
-    const ctx = c.getContext("2d")!;
-    const rect = c.getBoundingClientRect();
+    loadPalette();
+    const cv = ref.current!;
+    const ctx = cv.getContext("2d")!;
+    const rect = cv.getBoundingClientRect();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    c.width = rect.width * dpr;
-    c.height = rect.height * dpr;
+    cv.width = rect.width * dpr;
+    cv.height = rect.height * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     const poster = cfg.frames ? new FrameSequence(window.innerWidth < 768 ? cfg.frames.mobile : cfg.frames.desktop) : null;
     if (poster) {

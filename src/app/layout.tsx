@@ -8,6 +8,7 @@ import { BasketDrawer } from "@/components/basket/BasketDrawer";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { DemoBanner } from "@/components/layout/DemoBanner";
 import { site } from "@/config/site";
+import { defaultTheme, themeBootScript } from "@/config/theme";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"], display: "swap" });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], display: "swap" });
@@ -27,14 +28,17 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#070708",
+  themeColor: "#070b09",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-GB">
+    <html lang="en-GB" data-theme={defaultTheme} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <a
           href="#main"

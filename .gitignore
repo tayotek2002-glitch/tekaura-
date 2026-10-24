@@ -40,3 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /.next-demo/
+
+# shared previews/backups
+/tekaura-*.zip
+/tekaura-*.mp4
+/colour-*.jpg

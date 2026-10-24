@@ -13,7 +13,7 @@ export function ProductGallery({ product }: { product: Product }) {
 
   return (
     <div className="lg:sticky lg:top-[calc(var(--header-h)+24px)]">
-      <div className="relative aspect-square overflow-hidden rounded-[32px] bg-gradient-to-b from-white to-[#e9e9ee] ring-1 ring-black/[0.04]">
+      <div className="relative aspect-square overflow-hidden rounded-[32px] bg-gradient-to-b from-tile-a to-tile-b ring-1 ring-black/[0.04]">
         {mode === "spin" && hasSpin ? (
           <SpinViewer frames={product.spin!.frames} alt={product.title} />
         ) : images.length ? (
