@@ -55,3 +55,11 @@ Stills spend: 55 credits (master 11 + keyframes 44).
 |---|---|
 | Arthur (British, soft-spoken) | 8276ab97-fd3f-4af7-aba0-930b4ef15753 |
 | Imogen (British, bold) | 04029c22-30fd-4ac3-9d90-7a9239b124b7 |
+
+## Selections for the edit
+- S2: **take 2** (c8b22372…). The faint second ring/outline while the glass hovers is its reflection in the glossy
+  screen (offset shrinks to zero as it seats), not extra geometry. Take 3 kept as backup.
+- VO: **Arthur** (soft-spoken British, closest to "premium and understated"). Imogen take kept as an alternate;
+  swapping is one re-run of `audio.py` + `build.py`.
+- Frame rate: 60 fps via motion-compensated interpolation (FFmpeg minterpolate, mci/aobmc). Inspected
+  synthesised frames on the fastest S5 rotation: no ghosting, lens count stable.
