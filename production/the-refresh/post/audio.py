@@ -371,6 +371,16 @@ def split_vo(x, expected):
     if start is not None:
         regions.append((start, len(speech) - 1))
     regions = [r for r in regions if (r[1] - r[0]) > 12]
+    # Lines read with only a short breath between them merge; split the longest region at its quietest 80 ms.
+    while 0 < len(regions) < expected:
+        k = max(range(len(regions)), key=lambda j: regions[j][1] - regions[j][0])
+        a, b = regions[k]
+        win = np.convolve(db[a:b + 1], np.ones(8) / 8, "valid")
+        lo, hi = 30, len(win) - 30
+        if hi <= lo:
+            break
+        cut = a + lo + int(np.argmin(win[lo:hi])) + 4
+        regions[k:k + 1] = [(a, cut - 3), (cut + 3, b)]
     if len(regions) != expected:
         raise SystemExit(f"VO split found {len(regions)} lines, expected {expected}: {regions}")
     pad0, pad1 = s(0.03), s(0.12)
