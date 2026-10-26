@@ -162,9 +162,9 @@ class Overlay:
         # motivated light flashes on cuts
         for c in CUTS_WITH_FLASH:
             d = t - c
-            if -0.12 <= d <= 0.22:
-                a = (1 + d / 0.12) if d < 0 else (1 - d / 0.22)
-                f.fill(WARM, 0.32 * ease_in_out(a))
+            if -0.10 <= d <= 0.18:
+                a = (1 + d / 0.10) if d < 0 else (1 - d / 0.18)
+                f.fill(WARM, 0.26 * ease_in_out(a))
         # beam of light crossing the frame before the reveal
         b0, b1 = ec["beam"]
         if b0 <= t <= b1:
