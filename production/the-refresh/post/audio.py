@@ -438,6 +438,6 @@ if __name__ == "__main__":
     write_wav(out / "mix_novo.wav", master(bed))
     if len(sys.argv) > 2:
         vo = build_vo(sys.argv[2])
-        write_wav(out / "mix_vo.wav", master(duck(bed, vo) + vo))
+        write_wav(out / "mix_vo.wav", master(duck(bed, vo) + vo) * fade(N, 0.001, 0.3)[:, None])
     for f in sorted(out.glob("*.wav")):
         print(f.name)

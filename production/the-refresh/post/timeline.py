@@ -52,8 +52,8 @@ VO_LINES = [  # (text, global start)
     ("A clearer screen.", 5.20),
     ("Protection for every detail.", 7.45),
     ("A fresh new look.", 12.70),
-    ("Tekaura.", 18.75),
-    ("Refresh your phone.", 19.45),
+    ("Tekaura.", 18.60),
+    ("Refresh your phone.", 19.38),
 ]
 
 BPM = 120  # section changes (3, 7, 10, 14, 18.5 s) all land on beats
