@@ -37,3 +37,21 @@ Stills spend: 55 credits (master 11 + keyframes 44).
 | S3 Lens protector | K4 → K5 | 4 s | d5725fcb-8826-4049-bb44-a67895d28a18 |
 | S4 Clear case | K6 → K7 | 5 s | 573d71dd-c331-425b-a8d1-1e29d5357cda |
 | S5+6 Hero orbit | K8 → K7 | 6 s | b70f9975-cd5e-4452-b126-07bbb6d391e7 |
+
+### Review of take 1 (all 1080×1912, 24 fps)
+- S1 ✅ push-in + light sweep, scratches clear.
+- S2 ❌ protector changes size mid-flight and a second plate appears — rejected (wrong product geometry). Re-take submitted.
+- S3 ✅ lens protector cut-outs align with 3 lenses + flash; trim before the pull-back (~2.4 s).
+- S4 ✅ clean case fit + edge light.
+- S5 ✅ clean half-turn rear → front.
+
+| Shot | Take | Job |
+|---|---|---|
+| S2 | 2 | c8b22372-acb4-45df-add9-39447a3ea588 |
+| S2 | 3 | 3ccb88ef-95d2-4e68-a46c-f5fa3aab9e04 |
+
+## Voice-over (elevenlabs_v4, ~0.7 cr each)
+| Voice | Job |
+|---|---|
+| Arthur (British, soft-spoken) | 8276ab97-fd3f-4af7-aba0-930b4ef15753 |
+| Imogen (British, bold) | 04029c22-30fd-4ac3-9d90-7a9239b124b7 |
