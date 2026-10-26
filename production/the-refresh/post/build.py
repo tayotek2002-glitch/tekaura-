@@ -45,8 +45,11 @@ def main():
     vw, vh = (540, 960) if a.preview else (W, H)
 
     # 1. Conform each shot: trim, retime to its slot, 1080x1920, target fps (motion-compensated when retimed/upsampled).
+    def xfade_of(k):  # optional 6th field: dissolve into segment k (seconds)
+        return SEGMENTS[k][5] if 0 <= k < len(SEGMENTS) and len(SEGMENTS[k]) > 5 else 0.0
+
     seg_files = []
-    for i, (g0, gdur, clip, sin, sout) in enumerate(SEGMENTS):
+    for i, (g0, gdur, clip, sin, sout, *_) in enumerate(SEGMENTS):
         speed = (sout - sin) / gdur
         interp = (f"minterpolate=fps={fps}:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1"
                   if a.interp == "mci" and not a.preview else f"fps={fps}")
@@ -55,9 +58,18 @@ def main():
         is_last = i == len(SEGMENTS) - 1
         if is_last:  # hold the final hero frame under the end card
             vf += f",tpad=stop_mode=clone:stop_duration={DURATION - END_CARD_START + 0.1}"
+        elif xfade_of(i + 1):  # hold the last frame under the dissolve into the next shot
+            vf += f",tpad=stop_mode=clone:stop_duration={xfade_of(i + 1)}"
         out = work / f"seg{i + 1}.mp4"
         run(["ffmpeg", "-v", "error", "-y", "-i", str(clips / clip), "-vf", vf, "-an",
              "-c:v", "libx264", "-preset", "veryfast", "-crf", "10", "-pix_fmt", "yuv420p", str(out)])
+        if xfade_of(i):
+            prev, d = seg_files.pop(), xfade_of(i)
+            joined = work / f"seg{i}_{i + 1}.mp4"
+            run(["ffmpeg", "-v", "error", "-y", "-i", str(prev), "-i", str(out), "-filter_complex",
+                 f"[0:v][1:v]xfade=transition=fade:duration={d}:offset={SEGMENTS[i - 1][1]},format=yuv420p",
+                 "-an", "-c:v", "libx264", "-preset", "veryfast", "-crf", "10", str(joined)])
+            out = joined
         seg_files.append(out)
 
     # 2. Concatenate and grade.

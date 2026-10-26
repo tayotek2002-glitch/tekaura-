@@ -3,10 +3,10 @@
 DURATION = 21.0
 W, H = 1080, 1920
 
-# Picture: (global_start, global_dur, clip, src_in, src_out). Speed = (src_out - src_in) / global_dur.
+# Picture: (global_start, global_dur, clip, src_in, src_out[, dissolve_in]). Speed = (src_out - src_in) / global_dur.
 SEGMENTS = [
     (0.0, 3.0, "S1_t1.mp4", 0.60, 4.04),  # old phone, light reveal, push-in to macro
-    (3.0, 4.0, "S2_t2.mp4", 0.00, 4.40),  # screen protector lowers, light ripple clears scratches
+    (3.0, 4.0, "S2_t2.mp4", 0.42, 4.42, 0.3),  # protector materialises (0.3 s dissolve), lowers, light ripple clears scratches
     (7.0, 3.0, "S3_t1.mp4", 0.00, 2.45),  # rear module, lens protector attaches (before pull-back)
     (10.0, 4.0, "S4_t1.mp4", 0.70, 4.70),  # clear case, phone seats, edge light
     (14.0, 4.5, "S5_t1.mp4", 0.30, 5.60),  # hero half-turn rear -> front
@@ -15,8 +15,8 @@ END_CARD_START = 18.5  # last S5 frame held underneath; the overlay floods it wh
 
 # Key physical moments in the footage (global time), used to sync SFX.
 EVENTS = {
-    "protector_seat": 4.97,
-    "ripple_end": 5.85,
+    "protector_seat": 4.75,
+    "ripple_end": 5.68,
     "lens_attach": 9.40,
     "case_snap": 11.65,
     "hero_impact": 14.0,
