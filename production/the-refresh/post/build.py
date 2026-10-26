@@ -54,7 +54,8 @@ def main():
         interp = (f"minterpolate=fps={fps}:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1"
                   if a.interp == "mci" and not a.preview else f"fps={fps}")
         vf = (f"trim=start={sin}:end={sout},setpts=(PTS-STARTPTS)/{speed:.6f},"
-              f"scale={vw}:{vh}:flags=lanczos,setsar=1,{interp},trim=duration={gdur}")
+              f"scale={vw}:{vh}:flags=lanczos,setsar=1,{interp},"
+              f"tpad=stop_mode=clone:stop_duration=0.5,trim=duration={gdur}")  # minterpolate drops the last interval
         is_last = i == len(SEGMENTS) - 1
         if is_last:  # hold the final hero frame under the end card
             vf += f",tpad=stop_mode=clone:stop_duration={DURATION - END_CARD_START + 0.1}"
