@@ -63,3 +63,13 @@ Stills spend: 55 credits (master 11 + keyframes 44).
   swapping is one re-run of `audio.py` + `build.py`.
 - Frame rate: 60 fps via motion-compensated interpolation (FFmpeg minterpolate, mci/aobmc). Inspected
   synthesised frames on the fastest S5 rotation: no ghosting, lens count stable.
+
+## Deliverables (rendered in the Higgsfield sandbox, uploaded to the Higgsfield media library)
+
+| File | Spec | Higgsfield media ID |
+|---|---|---|
+| tekaura-refresh-9x16-60fps.mp4 | 1080×1920, H.264 High, 60 fps, 1260 frames = 21.000 s, AAC 320k stereo, −13.6 LUFS, 61 MB | 7483601a-d198-4bd6-adb8-500d675483ca |
+| tekaura-refresh-web-loop-60fps.mp4 | 1080×1920, 60 fps, 21.000 s, silent, scene titles removed, starts/ends on black | d95144c0-02c5-4b83-b524-17e8e70f42d2 |
+| tekaura-refresh-preview-v2.mp4 | 540×960 24 fps review proxy | 3e1418f6-858c-4c7e-b4f8-29faf271a3cf |
+
+Not produced (per "vertical only for now"): 16:9 landscape version.
