@@ -10,7 +10,7 @@ import {
 } from "@/lib/catalog";
 import { groupModelsByFamily, phoneModelName } from "@/data/phone-models";
 import { useBasket } from "@/context/basket";
-import { ProductArt } from "@/components/product/ProductArt";
+import { ProductVisual } from "@/components/product/ProductVisual";
 import { formatGBP, cn } from "@/lib/format";
 import { CheckIcon } from "@/components/ui/icons";
 
@@ -146,7 +146,7 @@ export function BundleBuilder() {
                                 <CheckIcon width={14} height={14} />
                               </span>
                             )}
-                            <ProductArt art={p.placeholder} className="aspect-square w-full transition-transform duration-700 group-hover:scale-105" />
+                            <ProductVisual product={p} className="aspect-square w-full rounded-xl transition-transform duration-700 group-hover:scale-105" />
                             <span className="mt-2 text-[13px] font-medium leading-tight">{p.title}</span>
                           </button>
                         );

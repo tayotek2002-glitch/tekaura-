@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { useBasket } from "@/context/basket";
 import { formatGBP } from "@/lib/format";
-import { ProductArt } from "@/components/product/ProductArt";
+import { ProductVisual } from "@/components/product/ProductVisual";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import { BagIcon, CloseIcon } from "@/components/ui/icons";
 import { phoneModelName } from "@/data/phone-models";
@@ -63,12 +63,7 @@ export function BasketDrawer() {
               {lines.map((l) => (
                 <li key={l.key} className="flex gap-4 py-5">
                   <Link href={`/product/${l.product.slug}`} onClick={close} className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-gradient-to-b from-mist to-cloud">
-                    {l.product.images[0] ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={l.product.images[0].src} alt={l.product.images[0].alt} className="h-full w-full object-cover" />
-                    ) : (
-                      <ProductArt art={l.product.placeholder} className="h-full w-full" />
-                    )}
+                    <ProductVisual product={l.product} className="h-full w-full" />
                   </Link>
                   <div className="flex min-w-0 flex-1 flex-col">
                     <div className="flex justify-between gap-3">

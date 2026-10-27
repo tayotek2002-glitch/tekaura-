@@ -35,6 +35,7 @@ const fileFor = (route) => (route === "/" ? null : `${route.slice(1).replace(/\/
 const known = new Set(routes);
 
 function rewriteLinks(html, fromMain) {
+  html = html.replace(/src="\/products\//g, `src="${fromMain ? "" : "../"}products/`);
   return html.replace(/href="(\/[^"]*)"/g, (_, href) => {
     const u = new URL(href, BASE);
     let route = u.pathname.replace(/\/$/, "") || "/";
@@ -103,6 +104,10 @@ css = css.replace(/html\[data-theme=["']?emerald["']?\]/g, ":root");
 const vars = [...css.matchAll(/\.__variable_[\w-]+\{([^}]*)\}/g)].map((m) => m[1]).join(";");
 css += `\n:root{${vars}}\n`;
 fs.writeFileSync(path.join(OUT, "styles.css"), css);
+
+// ── product photos ────────────────────────────────────────────────────────
+const photos = path.join(ROOT, "public/products");
+if (fs.existsSync(photos)) fs.cpSync(photos, path.join(OUT, "products"), { recursive: true });
 
 // ── runtime ───────────────────────────────────────────────────────────────
 execFileSync("npx", ["--yes", "esbuild@0.24.0", path.join(ROOT, "scripts/preview/app.ts"), "--bundle", "--minify", "--format=iife", "--target=es2019", `--outfile=${path.join(OUT, "app.js")}`], { stdio: "inherit" });

@@ -18,7 +18,7 @@ export function ProductGallery({ product }: { product: Product }) {
           <SpinViewer frames={product.spin!.frames} alt={product.title} />
         ) : images.length ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={images[active].src} alt={images[active].alt} className="h-full w-full object-cover" />
+          <img src={images[active].src} alt={images[active].alt} className="h-full w-full bg-white object-contain" />
         ) : (
           <ProductArt art={product.placeholder} className="h-full w-full animate-fade-up p-[14%]" />
         )}
@@ -61,7 +61,7 @@ export function ProductGallery({ product }: { product: Product }) {
               )}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img.src} alt="" className="h-full w-full object-cover" loading="lazy" />
+              <img src={img.src} alt="" className="h-full w-full bg-white object-contain" loading="lazy" />
             </button>
           ))}
         </div>

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getCategory, priceFrom, searchProducts } from "@/lib/catalog";
 import { formatGBP } from "@/lib/format";
-import { ProductArt } from "@/components/product/ProductArt";
+import { ProductVisual } from "@/components/product/ProductVisual";
 import { CloseIcon, SearchIcon } from "@/components/ui/icons";
 import { categories } from "@/data/categories";
 
@@ -85,8 +85,8 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
                   return (
                     <li key={p.id}>
                       <Link href={`/product/${p.slug}`} onClick={onClose} className="flex items-center gap-4 rounded-2xl p-2 hover:bg-mist">
-                        <span className="h-14 w-14 shrink-0 rounded-xl bg-gradient-to-b from-mist to-cloud">
-                          <ProductArt art={p.placeholder} className="h-full w-full" />
+                        <span className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-gradient-to-b from-mist to-cloud">
+                          <ProductVisual product={p} className="h-full w-full" />
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-[15px] font-medium">{p.title}</span>

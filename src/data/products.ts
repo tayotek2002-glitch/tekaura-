@@ -1,4 +1,5 @@
 import type { Product, ProductVariant } from "@/lib/catalog/types";
+import { productImages } from "./product-images";
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
@@ -343,4 +344,4 @@ export const seedProducts: Product[] = [
   ...headphones,
   ...travel,
   ...bundles,
-];
+].map((p) => (productImages[p.id] ? { ...p, images: productImages[p.id] } : p));

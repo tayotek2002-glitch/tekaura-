@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useBasket } from "@/context/basket";
 import { formatGBP } from "@/lib/format";
-import { ProductArt } from "@/components/product/ProductArt";
+import { ProductVisual } from "@/components/product/ProductVisual";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import { variantLabel } from "@/components/basket/BasketDrawer";
 
@@ -23,8 +23,8 @@ export default function BasketPage() {
             <ul className="divide-y divide-black/[0.06] rounded-[28px] bg-white px-6">
               {lines.map((l) => (
                 <li key={l.key} className="flex gap-5 py-6">
-                  <div className="h-28 w-28 shrink-0 rounded-2xl bg-gradient-to-b from-mist to-cloud">
-                    <ProductArt art={l.product.placeholder} className="h-full w-full" />
+                  <div className="h-28 w-28 shrink-0 overflow-hidden rounded-2xl bg-gradient-to-b from-mist to-cloud">
+                    <ProductVisual product={l.product} className="h-full w-full" />
                   </div>
                   <div className="flex flex-1 flex-col">
                     <div className="flex justify-between gap-4">
