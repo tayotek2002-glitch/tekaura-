@@ -89,39 +89,106 @@ function Art({ art, id }: { art: PlaceholderArt; id: string }) {
   }
 }
 
-/* ── UK three-pin plug ──────────────────────────────────────────────────── */
+/* ── UK three-pin plug (compact charger, three-quarter view) ─────────────
+   Faces are rounded rects projected with affine matrices, so ports and
+   corners foreshorten with the body. u = along the port face, v = depth,
+   w = down. */
+const PU = [0.94, -0.41];
+const PV = [-0.46, -0.56];
+const PLUG = { L: 200, D: 180, T: 78, taper: 46, x: 150, y: 226 };
+
+function plane(a: number[], b: number[], ox: number, oy: number) {
+  return `matrix(${a[0]} ${a[1]} ${b[0]} ${b[1]} ${ox} ${oy})`;
+}
+function at(u: number, v: number, w: number): [number, number] {
+  return [PLUG.x + PU[0] * u + PV[0] * v, PLUG.y + PU[1] * u + PV[1] * v + w];
+}
+
 function Plug({ usbA, usbC, id }: { usbA: number; usbC: number; id: string }) {
+  const { L, D, T } = PLUG;
   const ports: ("A" | "C")[] = [...Array(usbC).fill("C"), ...Array(usbA).fill("A")];
-  const n = ports.length;
-  const body = { x: 120, y: 96, w: 160, h: 240 };
-  const gap = Math.min(46, 160 / n);
-  const startY = body.y + body.h / 2 - ((n - 1) * gap) / 2 + 6;
+  const rows = ports.length > 3 ? [ports.slice(0, Math.ceil(ports.length / 2)), ports.slice(Math.ceil(ports.length / 2))] : [ports];
+  const front = plane(PU, [0, 1], PLUG.x, PLUG.y);
+  const top = plane(PU, PV, PLUG.x, PLUG.y);
+  // the left side follows the tapered edge from the front-left to the back-left corner
+  const sideLen = Math.hypot(PLUG.taper, D);
+  const side = [(PU[0] * PLUG.taper + PV[0] * D) / sideLen, (PU[1] * PLUG.taper + PV[1] * D) / sideLen];
+  const left = plane(side, [0, 1], PLUG.x, PLUG.y);
+  const r = 34; // corner radius of the top face
+  const k = PLUG.taper * (r / D);
+  const topOutline = `${r},${r} ${L - r},${r} ${L - PLUG.taper - r + k},${D - r} ${PLUG.taper + r - k},${D - r}`;
+
+  const pin = (u: number, v: number, len: number, wide: number) => {
+    const [bx, by] = at(u, v, T - 6);
+    return (
+      <g>
+        <g transform={plane(PV, [0, 1], bx, by)}>
+          <rect x="0" y="0" width="7" height={len} fill="#8d9097" />
+        </g>
+        <g transform={plane(PU, [0, 1], bx, by)}>
+          <rect x="0" y="0" width={wide} height={len} rx="1.5" fill={`url(#${id}-metal)`} />
+        </g>
+      </g>
+    );
+  };
+
   return (
-    <g>
-      {/* pins (behind the body, seen from a slight 3/4 angle) */}
-      <rect x="186" y="56" width="28" height="56" rx="3" fill={`url(#${id}-metal)`} />
-      <rect x="140" y="70" width="22" height="44" rx="3" fill={`url(#${id}-metal)`} opacity="0.92" />
-      <rect x="238" y="70" width="22" height="44" rx="3" fill={`url(#${id}-metal)`} opacity="0.92" />
-      <rect x="186" y="56" width="28" height="22" rx="3" fill="#1d1e21" opacity="0.18" />
+    <g transform="translate(200 200) scale(1.16) translate(-200 -196)">
+      {/* pins on the underside: earth (back), live and neutral (front) */}
+      {pin(L * 0.46, D * 0.78, 52, 22)}
+      {pin(L * 0.16, D * 0.3, 60, 26)}
+      {pin(L * 0.7, D * 0.3, 60, 26)}
+
       {/* body */}
-      <rect x={body.x + 10} y={body.y + 8} width={body.w} height={body.h} rx="34" fill="#c8cad0" />
-      <rect x={body.x} y={body.y} width={body.w} height={body.h} rx="34" fill={`url(#${id}-white)`} />
-      <rect x={body.x + 6} y={body.y + 6} width={body.w - 12} height="40" rx="28" fill="#fff" opacity="0.7" />
-      {ports.map((p, i) => {
-        const cy = startY + i * gap;
-        return p === "C" ? (
-          <g key={i}>
-            <rect x="178" y={cy - 8} width="44" height="16" rx="8" fill="#1a1b1f" />
-            <rect x="186" y={cy - 2.5} width="28" height="5" rx="2.5" fill="#55575e" />
-          </g>
-        ) : (
-          <g key={i}>
-            <rect x="168" y={cy - 11} width="64" height="22" rx="3" fill="#1a1b1f" />
-            <rect x="174" y={cy - 7} width="52" height="7" rx="1" fill="#2f6fe8" opacity="0.85" />
-          </g>
-        );
-      })}
-      <circle cx="200" cy={body.y + body.h - 22} r="3" fill="#2f7bff" opacity="0.8" />
+      <g transform={left}>
+        <rect x="-4" y="0" width={sideLen + 4} height={T} rx="26" fill="#cfd2d8" />
+      </g>
+      <g transform={front}>
+        <defs>
+          <linearGradient id={`${id}-plugfront`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#f7f8fa" />
+            <stop offset="100%" stopColor="#d7dae0" />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="-4" width={L} height={T + 4} rx="24" fill={`url(#${id}-plugfront)`} />
+        {rows.map((row, r) => {
+          const wy = rows.length === 1 ? T * 0.52 : T * (r === 0 ? 0.34 : 0.72);
+          const spacing = Math.min(70, (L * 0.78) / row.length);
+          const x0 = L / 2 - ((row.length - 1) * spacing) / 2;
+          return row.map((p, i) => {
+            const cx = x0 + i * spacing;
+            return p === "A" ? (
+              <g key={`${r}-${i}`}>
+                <rect x={cx - 27} y={wy - 11} width="54" height="22" rx="2.5" fill="#c4c7cd" />
+                <rect x={cx - 24} y={wy - 8} width="48" height="16" rx="1.5" fill="#1b1c20" />
+                <rect x={cx - 19} y={wy - 6} width="38" height="6" rx="1" fill="#f1f2f4" />
+              </g>
+            ) : (
+              <g key={`${r}-${i}`}>
+                <rect x={cx - 17} y={wy - 7.5} width="34" height="15" rx="7.5" fill="#c4c7cd" />
+                <rect x={cx - 14.5} y={wy - 5} width="29" height="10" rx="5" fill="#1b1c20" />
+                <rect x={cx - 9} y={wy - 1.5} width="18" height="3" rx="1.5" fill="#6b6e75" />
+              </g>
+            );
+          });
+        })}
+      </g>
+      <g transform={top}>
+        <defs>
+          <linearGradient id={`${id}-plugtop`} x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="60%" stopColor="#f3f4f6" />
+            <stop offset="100%" stopColor="#e4e6ea" />
+          </linearGradient>
+        </defs>
+        {/* rounded tapered face: an inset outline stroked with round joins */}
+        <polygon points={topOutline} fill={`url(#${id}-plugtop)`} stroke={`url(#${id}-plugtop)`} strokeWidth={r * 2} strokeLinejoin="round" />
+        <radialGradient id={`${id}-plugsheen`} cx="0.35" cy="0.3" r="0.6">
+          <stop offset="0%" stopColor="#fff" stopOpacity="0.95" />
+          <stop offset="100%" stopColor="#fff" stopOpacity="0" />
+        </radialGradient>
+        <polygon points={topOutline} fill={`url(#${id}-plugsheen)`} />
+      </g>
     </g>
   );
 }
