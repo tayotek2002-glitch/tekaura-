@@ -64,7 +64,8 @@ export interface Specification {
 
 /** Drives the built-in placeholder illustration until real photography exists. */
 export type PlaceholderArt =
-  | { kind: "plug"; usbA: number; usbC: number }
+  /** compact: tapered charger, ports on the edge · cube: square body, ports on the front face */
+  | { kind: "plug"; usbA: number; usbC: number; style?: "compact" | "cube" }
   | { kind: "cable"; from: "USB-A" | "USB-C"; to: "Lightning" | "USB-C"; braided?: boolean }
   | { kind: "protector"; variant: "clear" | "privacy" | "tempered" | "magic-clear" | "magic-privacy" }
   | { kind: "case"; finish: "clear" | "black" }

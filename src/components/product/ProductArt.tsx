@@ -71,7 +71,7 @@ function Defs({ id }: { id: string }) {
 function Art({ art, id }: { art: PlaceholderArt; id: string }) {
   switch (art.kind) {
     case "plug":
-      return <Plug usbA={art.usbA} usbC={art.usbC} id={id} />;
+      return art.style === "cube" ? <CubePlug usbA={art.usbA} usbC={art.usbC} id={id} /> : <Plug usbA={art.usbA} usbC={art.usbC} id={id} />;
     case "cable":
       return <Cable from={art.from} to={art.to} braided={art.braided} id={id} />;
     case "protector":
@@ -188,6 +188,91 @@ function Plug({ usbA, usbC, id }: { usbA: number; usbC: number; id: string }) {
           <stop offset="100%" stopColor="#fff" stopOpacity="0" />
         </radialGradient>
         <polygon points={topOutline} fill={`url(#${id}-plugsheen)`} />
+      </g>
+    </g>
+  );
+}
+
+/* ── UK three-pin plug (square body, ports on the front face) ────────────
+   Front face nearly square-on; side and top faces recede along CD; the
+   pins come out of the back face. */
+const CU = [0.86, 0.17]; // across the front face
+const CV = [0.05, 1]; // down the front face
+const CD = [0.6, -0.24]; // depth, towards the back
+const CUBE = { W: 182, H: 196, D: 132, x: 56, y: 108 };
+
+function cubeAt(u: number, v: number, d: number): [number, number] {
+  return [CUBE.x + CU[0] * u + CV[0] * v + CD[0] * d, CUBE.y + CU[1] * u + CV[1] * v + CD[1] * d];
+}
+
+function CubePlug({ usbA, usbC, id }: { usbA: number; usbC: number; id: string }) {
+  const { W, H, D } = CUBE;
+  const ports: ("A" | "C")[] = [...Array(usbA).fill("A"), ...Array(usbC).fill("C")];
+  const rows = ports.length > 3 ? [ports.slice(0, Math.ceil(ports.length / 2)), ports.slice(Math.ceil(ports.length / 2))] : [ports];
+
+  const pin = (v: number, len: number) => {
+    const [bx, by] = cubeAt(W * 0.86, v, D - 10);
+    return (
+      <g>
+        <g transform={plane(CD, CU, bx, by - 4)}>
+          <rect x="0" y="0" width={len} height="10" fill="#9ea1a8" />
+        </g>
+        <g transform={plane(CD, CV, bx, by)}>
+          <rect x="0" y="0" width={len} height="30" rx="2" fill={`url(#${id}-metal)`} />
+        </g>
+      </g>
+    );
+  };
+
+  return (
+    <g transform="translate(200 214) scale(1.16) translate(-200 -214)">
+      <defs>
+        <linearGradient id={`${id}-cubefront`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="70%" stopColor="#f2f3f5" />
+          <stop offset="100%" stopColor="#e3e5e9" />
+        </linearGradient>
+      </defs>
+
+      {/* earth pin (top) and one of the lower pins, out of the back */}
+      {pin(H * 0.18, 92)}
+      {pin(H * 0.7, 92)}
+
+      {/* body: the rounded front outline extruded towards the back */}
+      {Array.from({ length: Math.ceil(D / 4) + 1 }, (_, k) => {
+        const d = D - k * 4;
+        const shade = Math.round(196 + (1 - d / D) * 36);
+        return (
+          <g key={k} transform={plane(CU, CV, CUBE.x + CD[0] * d, CUBE.y + CD[1] * d)}>
+            <rect x="0" y="0" width={W} height={H} rx="42" fill={`rgb(${shade},${shade + 2},${shade + 6})`} />
+          </g>
+        );
+      })}
+
+      {/* front face */}
+      <g transform={plane(CU, CV, CUBE.x, CUBE.y)}>
+        <rect x="0" y="0" width={W} height={H} rx="42" fill={`url(#${id}-cubefront)`} />
+        <rect x="10" y="10" width={W - 20} height={H - 20} rx="34" fill="none" stroke="#ffffff" strokeWidth="3" opacity="0.8" />
+        {rows.map((row, r) =>
+          row.map((p, i) => {
+            const gap = 50;
+            const cx = 50 + i * gap;
+            const cy = 62 + r * 74;
+            return p === "A" ? (
+              <g key={`${r}-${i}`}>
+                <rect x={cx - 17} y={cy - 28} width="34" height="56" rx="3" fill="#c3c6cc" />
+                <rect x={cx - 14} y={cy - 25} width="28" height="50" rx="2" fill="#1b1c20" />
+                <rect x={cx - 11} y={cy - 21} width="9" height="42" rx="1" fill="#e9eaed" />
+              </g>
+            ) : (
+              <g key={`${r}-${i}`}>
+                <rect x={cx - 9} y={cy - 19} width="18" height="38" rx="9" fill="#c3c6cc" />
+                <rect x={cx - 6.5} y={cy - 16} width="13" height="32" rx="6.5" fill="#1b1c20" />
+                <rect x={cx - 1.5} y={cy - 9} width="3" height="18" rx="1.5" fill="#6b6e75" />
+              </g>
+            );
+          }),
+        )}
       </g>
     </g>
   );

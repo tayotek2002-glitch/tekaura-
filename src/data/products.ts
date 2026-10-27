@@ -92,7 +92,7 @@ const plugs: Product[] = plugDefs.map(([id, title, a, c], i) => {
     slug: title.toLowerCase().replace(/\+/g, "plus").replace(/[^a-z0-9]+/g, "-").replace(/-$/, ""),
     title,
     category: "charging-plugs",
-    placeholder: { kind: "plug", usbA: a, usbC: c },
+    placeholder: { kind: "plug", usbA: a, usbC: c, style: id === "plug-2a" ? "cube" : "compact" },
     options: [],
     variants: defaultVariant(id),
     requiresModel: false,
